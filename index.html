@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BROTHERHOOD - Dabalo</title>
+<style>
+body{background:#0a0f0d;color:#fff;font-family:system-ui;padding:12px;margin:0}
+.card{background:#131f1b;border:1px solid #1f3d2f;border-radius:16px;padding:18px;margin-bottom:12px}
+h1{margin:0;color:#4ade80;font-size:22px}
+.green{color:#4ade80;font-size:13px}
+.total{font-size:34px;font-weight:900;margin:8px 0}
+label{font-size:13px;color:#aaa}
+input,select{width:100%;padding:13px;margin:6px 0 14px 0;border-radius:10px;border:1px solid #2a4a3a;background:#1e2e28;color:#fff;box-sizing:border-box}
+button{width:100%;padding:16px;background:#4ade80;color:#000;font-weight:900;border-radius:12px;border:none;font-size:17px}
+table{width:100%;border-collapse:collapse}
+th{color:#4ade80;text-align:left;font-size:12px;padding:6px 0}
+td{padding:10px 0;border-bottom:1px solid #1e2e28;font-size:14px}
+small{color:#777}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>BROTHERHOOD</h1>
+<div class="green">Dabalo Youth Fund • Mchango wa Vijana</div>
+<div style="margin-top:12px">Jumla Iliyokusanywa</div>
+<div class="total" id="jumla">0 TZS</div>
+<div><span id="idadi">0</span> Wachangiaji • Msiba wa Emmanuel</div>
+</div>
+<div class="card">
+<h3 style="margin:0 0 10px 0">Tuma Mchango +</h3>
+<label>Majina Matatu</label>
+<input id="majina" placeholder="Mf: Alexander Bahat Masinga">
+<label>Namba ya Simu</label>
+<input id="namba" placeholder="07XX XXX XXX">
+<label>Kiasi (TZS)</label>
+<input id="kiasi" type="number" placeholder="10000">
+<label>Sababu</label>
+<select id="sababu">
+<option>Msiba wa Emmanuel George Msitakonywa</option>
+<option>Harusi / Mahari</option>
+<option>Ugonjwa</option>
+</select>
+<button onclick="tuma()">Tuma Mchango</button>
+<p style="text-align:center;font-size:11px;color:#888;margin-top:10px">Lipa kwa M-Pesa: 0653469354 Alexander Bahat Masinga<br>Alhams Kesho • Mazishi Ijumaa</p>
+</div>
+<div class="card">
+<h3 style="margin:0">Wachangiaji</h3>
+<table id="orodha"></table>
+</div>
+<script>
+let data = JSON.parse(localStorage.getItem('brotherhood_v2')||'[]');
+function update(){
+ let jumla=0; data.forEach(d=>jumla+=Number(d.kiasi||0));
+ document.getElementById('jumla').innerText=jumla.toLocaleString()+' TZS';
+ document.getElementById('idadi').innerText=data.length;
+ let h='<tr><th>JINA & NAMBA</th><th>KIASI</th></tr>';
+ data.slice().reverse().forEach(d=>{
+   h+=`<tr><td>${d.majina}<br><small>${d.namba} • ${d.sababu}</small></td><td style="color:#4ade80;font-weight:bold">+${d.kiasi} TZS</td></tr>`;
+ });
+ document.getElementById('orodha').innerHTML=h;
+}
+function tuma(){
+ let majina=document.getElementById('majina').value.trim();
+ let namba=document.getElementById('namba').value.trim();
+ let kiasi=document.getElementById('kiasi').value.trim();
+ let sababu=document.getElementById('sababu').value;
+ if(!majina||!namba||!kiasi){alert('Jaza Majina Matatu, Namba na Kiasi');return;}
+ data.push({majina,namba,kiasi,sababu});
+ localStorage.setItem('brotherhood_v2',JSON.stringify(data));
+ alert('Asante '+majina+'! Sasa tuma '+kiasi+' kwa 0653469354');
+ update();
+ document.getElementById('majina').value='';document.getElementById('namba').value='';document.getElementById('kiasi').value='';
+}
+update();
+</script>
+</body>
+</html>
