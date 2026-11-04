@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN - BROTHERHOOD</title>
+<style>
+body{background:#000;color:#fff;font-family:system-ui;padding:12px;margin:0}
+.card{background:#111;border:1px solid #222;border-radius:16px;padding:18px;margin-bottom:12px}
+input{width:100%;padding:14px;border-radius:10px;border:1px solid #333;background:#1a1a1a;color:#fff;margin:8px 0;font-size:15px}
+button{padding:14px;width:100%;background:#4ade80;color:#000;font-weight:900;border:none;border-radius:10px;margin-top:10px;font-size:16px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th{color:#4ade80;text-align:left;font-size:12px;padding:8px 0}
+td{padding:10px 0;border-bottom:1px solid #222;font-size:13px}
+</style>
+</head>
+<body>
+<h2 style="color:#4ade80">ADMIN PANEL</h2>
+<div class="card">
+<h3 style="margin:0 0 10px 0">Weka Mchangiaji Mpya</h3>
+<input id="majina" placeholder="Majina Matatu">
+<input id="namba" placeholder="Namba ya Simu">
+<input id="kiasi" type="number" placeholder="Kiasi - Chini 5000" min="5000">
+<button onclick="weka()">Ongeza</button>
+</div>
+<div class="card">
+<div id="jumla" style="font-weight:bold;margin-bottom:10px"></div>
+<table id="table"></table>
+<button onclick="clearAll()" style="background:red;color:#fff;margin-top:20px">Futa Wote</button>
+</div>
+<script>
+let data=JSON.parse(localStorage.getItem('brotherhood_FINAL_v3')||'[]');
+function render(){
+ let jumla=0;data.forEach(d=>jumla+=Number(d.kiasi));
+ document.getElementById('jumla').innerText='Jumla: '+jumla.toLocaleString()+' TZS / Watu: '+data.length;
+ let h='<tr><th>MAJINA</th><th>KIASI</th><th></th></tr>';
+ data.slice().reverse().forEach((d,i)=>{
+   let idx=data.length-1-i;
+   h+=`<tr><td><b>${d.majina}</b><br><small style="color:#888">${d.namba}</small></td><td style="color:#4ade80">${d.kiasi}</td><td><button onclick="futa(${idx})" style="width:auto;background:#333;color:red;padding:5px 10px">X</button></td></tr>`;
+ });
+ document.getElementById('table').innerHTML=h;
+}
+function weka(){
+ let majina=document.getElementById('majina').value.trim();
+ let namba=document.getElementById('namba').value.trim();
+ let kiasi=Number(document.getElementById('kiasi').value);
+ if(!majina||!namba||!kiasi){alert('Jaza vyote');return;}
+ if(kiasi<5000){alert('Chini ni 5000');return;}
+ data.push({majina,namba,kiasi,time:new Date().toLocaleTimeString()});
+ localStorage.setItem('brotherhood_FINAL_v3',JSON.stringify(data));
+ render();
+ document.getElementById('majina').value='';document.getElementById('namba').value='';document.getElementById('kiasi').value='';
+}
+function futa(i){data.splice(i,1);localStorage.setItem('brotherhood_FINAL_v3',JSON.stringify(data));render();}
+function clearAll(){if(confirm('Futa wote?')){localStorage.removeItem('brotherhood_FINAL_v3');data=[];render();}}
+render();
+</script>
+</body>
+</html>
