@@ -5,64 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BROTHERHOOD - Dabalo</title>
 <style>
-body{background:#0a0f0d;color:#fff;font-family:system-ui;padding:12px;margin:0}
-.card{background:#131f1b;border:1px solid #1f3d2f;border-radius:16px;padding:18px;margin-bottom:12px}
-h1{margin:0;color:#4ade80;font-size:22px}
-.green{color:#4ade80;font-size:13px}
-.total{font-size:34px;font-weight:900;margin:8px 0}
-label{font-size:13px;color:#aaa}
-input,select{width:100%;padding:13px;margin:6px 0 14px 0;border-radius:10px;border:1px solid #2a4a3a;background:#1e2e28;color:#fff;box-sizing:border-box}
-button{width:100%;padding:16px;background:#4ade80;color:#000;font-weight:900;border-radius:12px;border:none;font-size:17px}
-small{color:#777}
+*{box-sizing:border-box}
+body{background:#050a08;color:#fff;font-family:system-ui;padding:12px;margin:0}
+.card{background:#111f19;border:1px solid #1c3a2d;border-radius:20px;padding:20px;margin-bottom:14px}
+h1{margin:0;color:#4ade80;font-size:26px;font-weight:900}
+.sub1{color:#4ade80;font-size:14px}
+.total{font-size:38px;font-weight:900;margin:10px 0}
+.item{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #1a2e23;align-items:center}
+.dot{width:38px;height:38px;background:#1e3a2d;color:#4ade80;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px}
+.amount{color:#4ade80;font-weight:900;font-size:15px}
 </style>
 </head>
 <body>
 <div class="card">
 <h1>BROTHERHOOD</h1>
-<div class="green">Dabalo Youth Fund • Mchango wa Vijana</div>
-<div style="margin-top:12px">Jumla Iliyokusanywa</div>
+<div class="sub1">Dabalo Youth Fund • Mchango wa Vijana</div>
+<div style="margin-top:16px;color:#8aa99a;font-size:13px">Jumla Iliyokusanywa</div>
 <div class="total" id="jumla">0 TZS</div>
-<div><span id="idadi">0</span> Contributors</div>
+<div style="color:#cde9d8;font-size:13px"><span id="idadi">0</span> Wachangiaji • M-Pesa: 0625167946 ELIKA KAHULULE</div>
 </div>
+
 <div class="card">
-<h3>Send Donation +</h3>
-<label>Three Names *</label>
-<input id="majina" placeholder="Ex: Alexander Bahat Masinga">
-<label>Your Phone Number *</label>
-<input id="namba" placeholder="07XX XXX XXX">
-<label>Amount (TZS) - Minimum 5,000 *</label>
-<input id="kiasi" type="number" min="5000" placeholder="5000">
-<label>M-Pesa Transaction ID (Baada ya kutuma)</label>
-<input id="txid" placeholder="Mf: TH34RT... (Hiari)">
-<button onclick="tuma()">Send Donation</button>
-<p style="text-align:center;font-size:12px;color:#4ade80;margin-top:12px;font-weight:bold">M-Pesa: 0625167946 ELIKA KAHULULE</p>
+<div style="font-weight:800;font-size:18px;margin-bottom:12px">Orodha ya Wachangiaji <span id="count" style="float:right;color:#4ade80"></span></div>
+<div id="orodha"></div>
 </div>
+
 <script>
-let data = JSON.parse(localStorage.getItem('brotherhood_v2')||'[]');
+let data = JSON.parse(localStorage.getItem('brotherhood_FINAL_v3')||'[]');
 function update(){
  let jumla=0; data.forEach(d=>jumla+=Number(d.kiasi||0));
  document.getElementById('jumla').innerText=jumla.toLocaleString()+' TZS';
  document.getElementById('idadi').innerText=data.length;
-}
-function tuma(){
- let majina=document.getElementById('majina').value.trim();
- let namba=document.getElementById('namba').value.trim();
- let kiasi=Number(document.getElementById('kiasi').value);
- let txid=document.getElementById('txid').value.trim();
- if(!majina||!namba||!kiasi){alert('Jaza majina, namba na kiasi');return;}
- if(kiasi<5000){alert('Kiasi cha chini ni 5,000 TZS');return;}
- let rec={majina,namba,kiasi,txid:txid||'HAIJATHIBITISHWA',time:new Date().toLocaleString(),status:'Pending Verify'};
- data.push(rec);
- localStorage.setItem('brotherhood_v2',JSON.stringify(data));
- update();
- let mpesaNumber="0625167946";
- let ussd=`*150*00*1*${mpesaNumber}*${kiasi}#`;
- if(confirm(`Asante ${majina}! Kiasi ${kiasi} TZS. Bonyeza OK kufungua M-Pesa kulipia ELIKA KAHULULE. Baada ya kulipa rudi hapa uweke Transaction ID.`)){
-   window.location.href=`tel:${encodeURIComponent(ussd)}`;
- }
- document.getElementById('majina').value='';document.getElementById('namba').value='';document.getElementById('kiasi').value='';document.getElementById('txid').value='';
+ document.getElementById('count').innerText=data.length+'';
+ let html='';
+ if(data.length==0) html='<div style="text-align:center;color:#555;padding:30px">Bado hakuna mchango.<br>Admin ataweka hivi karibuni.</div>';
+ else data.slice().reverse().forEach(d=>{
+   let ini=d.majina.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
+   html+=`<div class="item"><div style="display:flex;gap:10px;align-items:center"><div class="dot">${ini}</div><div><div style="font-weight:700">${d.majina}</div><div style="font-size:11px;color:#7a9a8a">${d.namba} • ${d.time}</div></div></div><div class="amount">${Number(d.kiasi).toLocaleString()} TZS</div></div>`;
+ });
+ document.getElementById('orodha').innerHTML=html;
 }
 update();
+setInterval(update,2000);
 </script>
 </body>
 </html>
